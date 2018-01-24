@@ -1,24 +1,24 @@
 package com.rental.carshowroom.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @MappedSuperclass
-@Data
+@Getter
 @ToString
 @EqualsAndHashCode
 public class AbstractEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private final Long id;
 
     protected AbstractEntity() {
         this.id = null;
@@ -26,13 +26,11 @@ public class AbstractEntity {
 
     @CreatedDate
     @Column(name = "created_at", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     @JsonIgnore
-    private Date createdAt = new Date();
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @LastModifiedDate
     @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
     @JsonIgnore
-    private Date updatedAt = new Date();
+    private LocalDateTime updatedAt = LocalDateTime.now();
 }
