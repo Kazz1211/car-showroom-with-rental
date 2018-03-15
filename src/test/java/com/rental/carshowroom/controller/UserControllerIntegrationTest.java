@@ -70,12 +70,12 @@ public class UserControllerIntegrationTest extends AbstractWebIntegrationTest {
 
     @Test
     public void addUser_Positive_Test() throws Exception {
-        mockMvc.perform(authenticatedToken(post("/api/user"), admin)
+        mockMvc.perform(authenticatedToken(post("/api/violatingUser"), admin)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .with(csrf())
                 .content(mapper.writeValueAsBytes(user)))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", containsString("/api/user")))
+                .andExpect(header().string("Location", containsString("/api/violatingUser")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.email").value(email))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(UserStatus.INACTIVE.name()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.username").value(username))
@@ -84,7 +84,7 @@ public class UserControllerIntegrationTest extends AbstractWebIntegrationTest {
 
     @Test
     public void addUser_NoAuthorize_Test() throws Exception {
-        mockMvc.perform(post("/api/user")
+        mockMvc.perform(post("/api/violatingUser")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .with(csrf())
                 .content(mapper.writeValueAsBytes(user)))
@@ -95,7 +95,7 @@ public class UserControllerIntegrationTest extends AbstractWebIntegrationTest {
     @Test
     public void addUser_NotAdmin_Test() throws Exception {
         user.setRoles(Role.userRoles());
-        mockMvc.perform(authenticatedToken(post("/api/user"), user)
+        mockMvc.perform(authenticatedToken(post("/api/violatingUser"), user)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .with(csrf())
                 .content(mapper.writeValueAsBytes(user)))
@@ -106,7 +106,7 @@ public class UserControllerIntegrationTest extends AbstractWebIntegrationTest {
     @Test
     public void listAllUsers_Positive_test() throws Exception {
         saveTestUsers();
-        MockHttpServletResponse response = mockMvc.perform(authenticatedToken(get("/api/user"), admin))
+        MockHttpServletResponse response = mockMvc.perform(authenticatedToken(get("/api/violatingUser"), admin))
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
         User[] users = mapper.readValue(response.getContentAsString(), User[].class);
@@ -115,14 +115,14 @@ public class UserControllerIntegrationTest extends AbstractWebIntegrationTest {
 
     @Test
     public void listAllUsers_NotAdmin_test() throws Exception {
-        mockMvc.perform(authenticatedToken(get("/api/user"), user))
+        mockMvc.perform(authenticatedToken(get("/api/violatingUser"), user))
                 .andExpect(status().isForbidden())
                 .andReturn();
     }
 
     @Test
     public void listAllUsers_NoAuthorize_test() throws Exception {
-        mockMvc.perform(get("/api/user"))
+        mockMvc.perform(get("/api/violatingUser"))
                 .andExpect(status().isUnauthorized())
                 .andReturn();
     }
@@ -139,7 +139,7 @@ public class UserControllerIntegrationTest extends AbstractWebIntegrationTest {
 
     private void checkPositiveUpdate(User principal) throws Exception {
         userRepository.save(user);
-        mockMvc.perform(authenticatedToken(put("/api/user/" + user.getId()), principal)
+        mockMvc.perform(authenticatedToken(put("/api/violatingUser/" + user.getId()), principal)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .with(csrf())
                 .content(mapper.writeValueAsBytes(toUpdate)))
@@ -157,7 +157,7 @@ public class UserControllerIntegrationTest extends AbstractWebIntegrationTest {
                 .roles(Role.userRoles())
                 .status(UserStatus.ACTIVE)
                 .build();
-        mockMvc.perform(authenticatedToken(put("/api/user/" + user.getId()), testUser)
+        mockMvc.perform(authenticatedToken(put("/api/violatingUser/" + user.getId()), testUser)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .with(csrf())
                 .content(mapper.writeValueAsBytes(toUpdate)))
@@ -168,7 +168,7 @@ public class UserControllerIntegrationTest extends AbstractWebIntegrationTest {
     @Test
     public void updateUser_Unauthorized_Test() throws Exception {
         userRepository.save(user);
-        mockMvc.perform(put("/api/user/" + user.getId())
+        mockMvc.perform(put("/api/violatingUser/" + user.getId())
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .with(csrf())
                 .content(mapper.writeValueAsBytes(toUpdate)))
@@ -180,7 +180,7 @@ public class UserControllerIntegrationTest extends AbstractWebIntegrationTest {
     public void updateUser_ChangeUsername_Test() throws Exception {
         userRepository.save(user);
         toUpdate.setUsername(RandomStringUtils.randomAlphabetic(6));
-        mockMvc.perform(authenticatedToken(put("/api/user/" + user.getId()), admin)
+        mockMvc.perform(authenticatedToken(put("/api/violatingUser/" + user.getId()), admin)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .with(csrf())
                 .content(mapper.writeValueAsBytes(toUpdate)))
@@ -194,7 +194,7 @@ public class UserControllerIntegrationTest extends AbstractWebIntegrationTest {
     @Test
     public void deleteUser_Admin_Test() throws Exception {
         userRepository.save(user);
-        mockMvc.perform(authenticatedToken(delete("/api/user/" + user.getId()), admin)
+        mockMvc.perform(authenticatedToken(delete("/api/violatingUser/" + user.getId()), admin)
                 .with(csrf()))
                 .andExpect(status().isNoContent())
                 .andReturn();
@@ -204,7 +204,7 @@ public class UserControllerIntegrationTest extends AbstractWebIntegrationTest {
     @Test
     public void deleteUser_OwnProfile_Test() throws Exception {
         userRepository.save(user);
-        mockMvc.perform(authenticatedToken(delete("/api/user/" + user.getId()), user)
+        mockMvc.perform(authenticatedToken(delete("/api/violatingUser/" + user.getId()), user)
                 .with(csrf()))
                 .andExpect(status().isNoContent())
                 .andReturn();
@@ -214,7 +214,7 @@ public class UserControllerIntegrationTest extends AbstractWebIntegrationTest {
     @Test
     public void deleteUser_Unauthorized_Test() throws Exception {
         userRepository.save(user);
-        mockMvc.perform(delete("/api/user/" + user.getId())
+        mockMvc.perform(delete("/api/violatingUser/" + user.getId())
                 .with(csrf()))
                 .andExpect(status().isUnauthorized())
                 .andReturn();
@@ -228,7 +228,7 @@ public class UserControllerIntegrationTest extends AbstractWebIntegrationTest {
                 .roles(Role.userRoles())
                 .status(UserStatus.ACTIVE)
                 .build();
-        mockMvc.perform(authenticatedToken(delete("/api/user/" + user.getId()), testUser)
+        mockMvc.perform(authenticatedToken(delete("/api/violatingUser/" + user.getId()), testUser)
                 .with(csrf()))
                 .andExpect(status().isForbidden())
                 .andReturn();
@@ -238,7 +238,7 @@ public class UserControllerIntegrationTest extends AbstractWebIntegrationTest {
     @Test
     public void getUser_Admin_Test() throws Exception {
         userRepository.save(user);
-        mockMvc.perform(authenticatedToken(get("/api/user/" + user.getId()), admin)
+        mockMvc.perform(authenticatedToken(get("/api/violatingUser/" + user.getId()), admin)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.nameAndSurname").value(user.getNameAndSurname()))
@@ -250,7 +250,7 @@ public class UserControllerIntegrationTest extends AbstractWebIntegrationTest {
     @Test
     public void getUser_OwnProfile_Test() throws Exception {
         userRepository.save(user);
-        mockMvc.perform(authenticatedToken(get("/api/user/" + user.getId()), user)
+        mockMvc.perform(authenticatedToken(get("/api/violatingUser/" + user.getId()), user)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.nameAndSurname").value(user.getNameAndSurname()))
@@ -267,7 +267,7 @@ public class UserControllerIntegrationTest extends AbstractWebIntegrationTest {
                 .roles(Role.userRoles())
                 .status(UserStatus.ACTIVE)
                 .build();
-        mockMvc.perform(authenticatedToken(get("/api/user/" + user.getId()), testUser)
+        mockMvc.perform(authenticatedToken(get("/api/violatingUser/" + user.getId()), testUser)
                 .with(csrf()))
                 .andExpect(status().isForbidden())
                 .andReturn();
@@ -276,7 +276,7 @@ public class UserControllerIntegrationTest extends AbstractWebIntegrationTest {
     @Test
     public void getUser_Unauthorized_Test() throws Exception {
         userRepository.save(user);
-        mockMvc.perform(get("/api/user/" + user.getId())
+        mockMvc.perform(get("/api/violatingUser/" + user.getId())
                 .with(csrf()))
                 .andExpect(status().isUnauthorized())
                 .andReturn();

@@ -3,6 +3,7 @@ package com.rental.carshowroom.controller;
 import com.rental.carshowroom.model.User;
 import com.rental.carshowroom.service.UserService;
 import com.rental.carshowroom.service.VerificationTokenService;
+import com.rental.carshowroom.service.ViolationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,11 +20,13 @@ import java.util.List;
 public class UserController {
     private UserService userService;
     private VerificationTokenService verificationTokenService;
+    private ViolationService violationService;
 
     @Autowired
-    public UserController(UserService userService, VerificationTokenService verificationTokenService) {
+    public UserController(UserService userService, VerificationTokenService verificationTokenService, ViolationService violationService) {
         this.userService = userService;
         this.verificationTokenService = verificationTokenService;
+        this.violationService = violationService;
     }
 
     @PostMapping
@@ -73,5 +76,18 @@ public class UserController {
         User user = verificationTokenService.activateAccountWithToken(token);
         return ResponseEntity.ok(userService.updateUser(user, user.getId()));
     }
+
+    @PostMapping("/ban/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<User> banUser(@PathVariable Long id) {
+        return ResponseEntity.ok(violationService.banUser(id));
+    }
+
+    @PostMapping("/unban/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<User> unbanUser(@PathVariable Long id) {
+        return ResponseEntity.ok(violationService.unbanUser(id));
+    }
+
 }
 

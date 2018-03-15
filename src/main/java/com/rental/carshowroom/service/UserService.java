@@ -7,7 +7,6 @@ import com.rental.carshowroom.model.User;
 import com.rental.carshowroom.model.enums.RoleType;
 import com.rental.carshowroom.model.enums.UserStatus;
 import com.rental.carshowroom.repository.UserRepository;
-import com.rental.carshowroom.repository.VerificationTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -66,7 +65,7 @@ public class UserService {
         return userRepository.save(userInDb);
     }
 
-    private User findUser(Long id) throws NotFoundException {
+    public User findUser(Long id) throws NotFoundException {
         User user = userRepository.findOne(id);
         if (user != null) {
             return user;
@@ -95,5 +94,6 @@ public class UserService {
     public boolean isProperUser(Long id) {
         return findUser(id).getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName());
     }
+
 }
 

@@ -27,6 +27,8 @@ class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/car/*").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/user/registration").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/user/registration/confirm").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/violation/*").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/violation").permitAll()
                 .anyRequest()
                 .authenticated();
     }

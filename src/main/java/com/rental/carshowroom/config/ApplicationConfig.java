@@ -12,7 +12,6 @@ import java.util.Properties;
 
 @Configuration
 @PropertySource("classpath:email.properties")
-
 public class ApplicationConfig {
 
     @Value("${emailadress}")

@@ -31,19 +31,19 @@ public class User extends AbstractEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @NotBlank
-    @Size(max = 20, message = "{msg.validation.user.username.size}")
+    @Size(max = 20, message = "{msg.validation.violatingUser.username.size}")
     @Column(updatable = false)
     private String username;
     @NotBlank
-    @Size(max = 100, message = "{msg.validation.user.nameandsurname.size}")
+    @Size(max = 100, message = "{msg.validation.violatingUser.nameandsurname.size}")
     private String nameAndSurname;
     @NotNull
-    @Pattern(regexp = Patterns.PESEL, message = "{msg.validation.user.pesel.pattern}")
+    @Pattern(regexp = Patterns.PESEL, message = "{msg.validation.violatingUser.pesel.pattern}")
     private String pesel;
     @Enumerated(EnumType.STRING)
     private UserStatus status = UserStatus.INACTIVE;
     @NotNull
-    @Pattern(regexp = Patterns.EMAIL, message = "{msg.validation.user.email.pattern}")
+    @Pattern(regexp = Patterns.EMAIL, message = "{msg.validation.violatingUser.email.pattern}")
     private String email;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotBlank
@@ -52,7 +52,12 @@ public class User extends AbstractEntity implements UserDetails {
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+
     private Set<Role> roles;
+
+    @JsonIgnore
+    @OneToMany
+    private Set<Violation> violations;
 
     @Override
     @JsonIgnore
